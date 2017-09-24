@@ -18,3 +18,9 @@ def parse_loc_update(updated_data):
                 'z': update['location']['z']}
     else:
         return None
+
+
+def return_no_position():
+    return {'x': None,
+            'y': None,
+            'z': None}

@@ -17,7 +17,7 @@ def load_frames():
     from rocketleagueminimapgenerator.object_numbers import get_ball_obj_nums, \
         get_car_obj_nums, get_player_info
     from rocketleagueminimapgenerator.location import parse_loc_spawn, \
-        parse_loc_update
+        parse_loc_update, return_no_position
 
     data = get_data()
 
@@ -74,3 +74,6 @@ def load_frames():
                             loc = parse_loc_update(updated_data)
                             if loc:
                                 frames[i]['cars'][player_id]['loc'] = loc
+                elif 'destroyed_replication_value' in \
+                        frame_data['value'].keys():
+                    frames[i]['cars'][player_id]['loc'] = return_no_position()

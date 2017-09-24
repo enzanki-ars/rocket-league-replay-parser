@@ -10,8 +10,8 @@ from tqdm import tqdm
 
 def render_field(out_prefix):
     from rocketleagueminimapgenerator.frames import get_frames
-    from rocketleagueminimapgenerator.main import frame_num_format, car_template, \
-        field_template
+    from rocketleagueminimapgenerator.main import frame_num_format, \
+        car_template, field_template
     from rocketleagueminimapgenerator.data import get_data_end
     from rocketleagueminimapgenerator.data import get_data
     from rocketleagueminimapgenerator.object_numbers import get_player_info
@@ -66,13 +66,23 @@ def render_field(out_prefix):
             car_placement = ''
 
             for car_id in frames[i]['cars'].keys():
+                if frames[i]['cars'][car_id]['loc']['x'] and \
+                        frames[i]['cars'][car_id]['loc']['y']:
+                    car_pos_x = (frames[i]['cars'][car_id]['loc'][
+                                     'x'] - min_x) / size_modifier
+                    car_pos_y = (frames[i]['cars'][car_id]['loc'][
+                                     'y'] - min_y) / size_modifier
+                    car_show_size = car_size
+                else:
+                    car_pos_x = -10000
+                    car_pos_y = -10000
+                    car_show_size = 0
+
                 car_placement += car_template.format(
                         team_id=get_player_info()[car_id]['team'],
-                        car_pos_x=(frames[i]['cars'][car_id]['loc'][
-                                       'x'] - min_x) / size_modifier,
-                        car_pos_y=(frames[i]['cars'][car_id]['loc'][
-                                       'y'] - min_y) / size_modifier,
-                        car_size=car_size
+                        car_pos_x=car_pos_x,
+                        car_pos_y=car_pos_y,
+                        car_size=car_show_size
                 )
 
             cairosvg.svg2png(bytestring=bytes(
@@ -81,10 +91,10 @@ def render_field(out_prefix):
                                           center_pos_x=x_size / 2,
                                           center_pos_y=y_size / 2,
                                           center_size=center_size,
-                                          ball_pos_x=(ball_loc['x'][
-                                                          i] - min_x) / size_modifier,
-                                          ball_pos_y=(ball_loc['y'][
-                                                          i] - min_y) / size_modifier,
+                                          ball_pos_x=(ball_loc['x'][i] -
+                                                      min_x) / size_modifier,
+                                          ball_pos_y=(ball_loc['y'][i] -
+                                                      min_y) / size_modifier,
                                           ball_size=ball_size,
                                           time_x=x_size - 5,
                                           time_y=5,
@@ -106,13 +116,14 @@ def render_video(out_prefix, out_frame_rate=30):
         for i, frame in enumerate(get_frames()[:get_data_end()]):
             out_str += 'file \'' + os.path.join(out_prefix,
                                                 frame_num_format.format(
-                                                        i) + '.png') + '\'\n'
+                                                        i) +
+                                                '.png') + '\'\n'
             out_str += 'duration ' + str(frame['delta']) + '\n'
         # Ensure display of final frame
         out_str += 'file \'' + os.path.join(out_prefix,
                                             frame_num_format.format(
-                                                    get_data_end()) + '.png') + \
-                   '\'\n'
+                                                    get_data_end()) +
+                                            '.png') + '\'\n'
         f.write(out_str)
 
     p = subprocess.Popen(['ffmpeg',
