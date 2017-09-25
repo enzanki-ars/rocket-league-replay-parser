@@ -2,11 +2,11 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
         "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve"
-     width="{y_size}px" height="{x_size}px"
+     width="{x_size}px" height="{y_size}px"
      version="1.1"
      style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision;
      image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-     viewBox="0 0 {y_size} {x_size}" >
+     viewBox="0 0 {x_size} {y_size}" >
     <defs>
         <style type="text/css">
             <![CDATA[
@@ -17,15 +17,14 @@
                 .team2 {{fill:blue}}
                 .team3 {{fill:orange}}
                 .fill-black {{fill:black}}
-                .font {{font-weight:normal;font-size:{time_size}px;font-family:'Arial'}}
             ]]>
         </style>
     </defs>
     <g id="Layer_x0020_1">
-        <rect class="fill-white stroke-black" width="{y_size}" height="{x_size}"/>
-        <line class="fill-black stroke-silver" x1="{center_pos_y}" y1="0" x2="{center_pos_y}" y2="{x_size}" />
-        <circle class="fill-white stroke-silver" cx="{center_pos_y}" cy="{center_pos_x}" r="{center_size}"/>
+        <rect class="fill-white stroke-black" width="{x_size}" height="{y_size}"/>
+        <line class="fill-black stroke-silver" x1="0" y1="{center_pos_y}" x2="{x_size}" y2="{center_pos_y}" />
+        <circle class="fill-white stroke-silver" cx="{center_pos_x}" cy="{center_pos_y}" r="{center_size}"/>
         {car_placement}
-        <circle class="fill-grey stroke-black" cx="{ball_pos_y}" cy="{ball_pos_x}" r="{ball_size}"/>
+        <circle class="fill-grey stroke-black" cx="{ball_pos_x}" cy="{ball_pos_y}" r="{ball_size}"/>
     </g>
 </svg>

@@ -22,13 +22,13 @@ def get_ball_obj_nums():
 
 
 def parse_car_obj_nums():
-    from rocketleagueminimapgenerator.data import get_data
+    from rocketleagueminimapgenerator.data import get_data, get_data_end
 
     global car_objects
 
     car_objects = {}
 
-    for frame in get_data()['content']['frames']:
+    for frame in get_data()['content']['frames'][:get_data_end()]:
         for actor in frame['replications']:
 
             actor_id = actor['actor_id']['value']

@@ -1,7 +1,9 @@
 __all__ = ['main',
            'actor_data',
+           'config'
            'data',
            'frames',
-           'object_numbers',
            'location',
-           'render']
+           'object_numbers',
+           'render',
+           'util']

@@ -7,9 +7,9 @@ def get_actor_data():
 
 def parse_actor_data():
     global actor_data
-    from rocketleagueminimapgenerator.data import get_data
+    from rocketleagueminimapgenerator.data import get_data, get_data_end
 
-    for frame in get_data()['content']['frames']:
+    for frame in get_data()['content']['frames'][:get_data_end()]:
         for actor in frame['replications']:
 
             actor_id = actor['actor_id']['value']
