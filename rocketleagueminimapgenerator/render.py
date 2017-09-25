@@ -75,30 +75,37 @@ def render_frame(ball_loc, frames, frame_num,
         tri_pt_y_const = r / math.sqrt(3)
 
         for car_id in frames[frame_num]['cars'].keys():
-            car_x = ((frames[frame_num]['cars'][car_id]['loc']['x']
-                      - min_x) / get_config('size_modifier'))
-            car_y = ((frames[frame_num]['cars'][car_id]['loc']['y']
-                      - min_y) / get_config('size_modifier'))
+            if frames[frame_num]['cars'][car_id]['loc']['x'] and \
+                    frames[frame_num]['cars'][car_id]['loc']['y']:
+                car_pos_x = (frames[frame_num]['cars'][car_id]['loc']['x']
+                             - min_x) / get_config('size_modifier')
+                car_pos_y = (frames[frame_num]['cars'][car_id]['loc']['y']
+                             - min_y) / get_config('size_modifier')
+                car_show_size = car_size
+            else:
+                car_pos_x = -10000
+                car_pos_y = -10000
+                car_show_size = 0
 
             car_placement += car_template.format(
                     team_id=get_player_info()[car_id]['team'],
-                    car_pos_x=car_x,
-                    car_pos_y=car_y,
+                    car_pos_x=car_pos_x,
+                    car_pos_y=car_pos_y,
 
-                    car_triangle_pt1_x=car_x,
-                    car_triangle_pt1_y=car_y - r,
+                    car_triangle_pt1_x=car_pos_x,
+                    car_triangle_pt1_y=car_pos_y - r,
 
-                    car_triangle_pt2_x=car_x - tri_pt_x_const,
-                    car_triangle_pt2_y=car_y + tri_pt_y_const,
+                    car_triangle_pt2_x=car_pos_x - tri_pt_x_const,
+                    car_triangle_pt2_y=car_pos_y + tri_pt_y_const,
 
-                    car_triangle_pt3_x=car_x + tri_pt_x_const,
-                    car_triangle_pt3_y=car_y + tri_pt_y_const,
+                    car_triangle_pt3_x=car_pos_x + tri_pt_x_const,
+                    car_triangle_pt3_y=car_pos_y + tri_pt_y_const,
 
-                    car_angle=frames[frame_num]['cars'][car_id]['rot']['y'] + \
-                              90,
+                    car_angle=(frames[frame_num]['cars'][car_id]['rot']['y'] +
+                               90),
 
-                    car_size=car_size,
-                    arrow_move=car_size * 1.5
+                    car_size=car_show_size,
+                    arrow_move=car_show_size * 1.5
             )
 
         cairosvg.svg2png(bytestring=bytes(
@@ -130,13 +137,14 @@ def render_video(out_prefix, out_frame_rate=30):
         for i, frame in enumerate(get_frames()[:get_data_end()]):
             out_str += 'file \'' + os.path.join(out_prefix,
                                                 frame_num_format.format(
-                                                        i) + '.png') + '\'\n'
+                                                        i) +
+                                                '.png') + '\'\n'
             out_str += 'duration ' + str(frame['delta']) + '\n'
         # Ensure display of final frame
         out_str += 'file \'' + os.path.join(out_prefix,
                                             frame_num_format.format(
-                                                    get_data_end()) + '.png') + \
-                   '\'\n'
+                                                    get_data_end()) +
+                                            '.png') + '\'\n'
         f.write(out_str)
 
     p = subprocess.Popen(['ffmpeg',

@@ -61,3 +61,9 @@ def parse_rot_update(updated_data):
             returned_data['z'] = update['rotation']['z']['value'] / 65536 * 360
 
     return returned_data
+
+
+def return_no_position():
+    return {'x': None,
+            'y': None,
+            'z': None}
