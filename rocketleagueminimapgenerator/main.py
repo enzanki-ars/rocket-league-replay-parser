@@ -8,7 +8,7 @@ from rocketleagueminimapgenerator.object_numbers import parse_ball_obj_nums, \
     parse_car_obj_nums, parse_player_info
 from rocketleagueminimapgenerator.render import render_field, render_video
 
-with open('field-template.svg', 'r') as svg_file:
+with open('field-template-dfh-stadium.svg', 'r') as svg_file:
     field_template = svg_file.read()
 
 car_template = '<circle class="team{team_id} stroke-black" ' \
