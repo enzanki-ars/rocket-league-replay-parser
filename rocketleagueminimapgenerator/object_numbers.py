@@ -3,6 +3,7 @@ from tqdm import tqdm
 ball_objects = []
 car_objects = {}
 player_info = {}
+game_event_num = None
 
 
 def parse_ball_obj_nums():
@@ -19,6 +20,22 @@ def parse_ball_obj_nums():
 
 def get_ball_obj_nums():
     return ball_objects
+
+def parse_game_event_num():
+    from rocketleagueminimapgenerator.actor_data import get_actor_data
+
+    global game_event_num
+
+    game_event_num = 1
+
+    for i, obj in enumerate(get_actor_data()):
+        if 'TAGame.GameEvent_Soccar_TA' in get_actor_data()[obj]:
+            game_event_num = i
+            return
+
+
+def get_game_event_num():
+    return game_event_num
 
 
 def parse_car_obj_nums():
