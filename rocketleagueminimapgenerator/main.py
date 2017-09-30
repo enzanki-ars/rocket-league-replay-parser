@@ -57,6 +57,7 @@ def main():
     parse_player_info()
     load_frames()
 
+    video_prefix = os.path.join('renders', out_prefix.split('.')[0])
     if args.data_start:
         set_data_start(args.data_start)
     if args.data_end:

@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 def find_scale():
     from rocketleagueminimapgenerator.frames import get_frames
+    from rocketleagueminimapgenerator.data import get_data_start, get_data_end
     from rocketleagueminimapgenerator.config import get_config
 
     frames = get_frames()

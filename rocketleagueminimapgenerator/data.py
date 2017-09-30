@@ -32,7 +32,7 @@ def set_data_start(new_data_start):
 
 
 def get_data_start():
-    return data_end
+    return data_start
 
 
 def set_data_end(new_data_end):
