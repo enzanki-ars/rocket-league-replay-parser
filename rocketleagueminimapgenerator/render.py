@@ -59,7 +59,7 @@ def find_scale():
 
 def render_field(out_prefix):
     from rocketleagueminimapgenerator.frames import get_frames
-    from rocketleagueminimapgenerator.data import get_data_end
+    from rocketleagueminimapgenerator.data import get_data_start, get_data_end
 
     frames = get_frames()
 
@@ -72,8 +72,8 @@ def render_field(out_prefix):
         path = Path(out_prefix)
         path.mkdir(parents=True)
 
-    for i in tqdm(range(0, get_data_end()), desc='Video Frame Out',
-                  ascii=True):
+    for i in tqdm(range(get_data_start(), get_data_end()),
+                  desc='Video Frame Out', ascii=True):
         render_frame(frames=frames, frame_num=i, out_prefix=out_prefix,
                      x_size=x_w, y_size=y_w, scale=scale)
 
@@ -151,13 +151,14 @@ def render_frame(frames, frame_num, out_prefix, x_size, y_size, scale):
 def render_video(out_prefix, out_frame_rate=30):
     from rocketleagueminimapgenerator.frames import get_frames
     from rocketleagueminimapgenerator.main import frame_num_format
-    from rocketleagueminimapgenerator.data import get_data_end
+    from rocketleagueminimapgenerator.data import get_data_start, get_data_end
 
     Path(out_prefix + '-frames.txt').touch()
 
     with open(out_prefix + '-frames.txt', 'w') as f:
         out_str = ''
-        for i, frame in enumerate(get_frames()[:get_data_end()]):
+        for i, frame in enumerate(
+                get_frames()[get_data_start():get_data_end()]):
             out_str += 'file \'' + os.path.join(out_prefix,
                                                 frame_num_format.format(
                                                         i) + '.png') + '\'\n'

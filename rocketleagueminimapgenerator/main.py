@@ -30,7 +30,11 @@ def main():
     parser.add_argument('game_json', help='The name of the game json.')
 
     # Optional args
-    parser.add_argument('--data_end', help='Number of frames to render.',
+    parser.add_argument('--data_start',
+                        help='Number of frames to render (start).',
+                        type=int)
+    parser.add_argument('--data_end',
+                        help='Number of frames to render (end).',
                         type=int)
 
     args = parser.parse_args()
@@ -38,19 +42,16 @@ def main():
     out_prefix = args.game_json
 
     load_data(out_prefix)
-
-    if args.data_end:
-        set_data_end(args.data_end)
-
     parse_actor_data()
-
     parse_ball_obj_nums()
     parse_car_obj_nums()
     parse_player_info()
-
     load_frames()
 
-    video_prefix = os.path.join('renders', out_prefix.split('.')[0])
+    if args.data_start:
+        set_data_start(args.data_start)
+    if args.data_end:
+        set_data_end(args.data_end)
 
     render_field(video_prefix)
 

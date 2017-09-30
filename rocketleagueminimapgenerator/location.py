@@ -1,6 +1,6 @@
 def parse_loc_spawn(frame_data):
-    spawn_data = frame_data['value']['spawned_replication_value'] \
-        ['initialization']
+    spawn_data = (frame_data['value']['spawned_replication_value']
+                  ['initialization'])
 
     returned_data = {}
 
@@ -16,8 +16,8 @@ def parse_loc_spawn(frame_data):
 
 
 def parse_rot_spawn(frame_data):
-    spawn_data = frame_data['value']['spawned_replication_value'] \
-        ['initialization']
+    spawn_data = (frame_data['value']['spawned_replication_value']
+                  ['initialization'])
 
     returned_data = {}
 

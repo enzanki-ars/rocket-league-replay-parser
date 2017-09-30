@@ -3,6 +3,7 @@ import json
 data = None
 
 data_end = None
+data_start = 0
 
 
 def load_data(out_prefix):
@@ -17,6 +18,21 @@ def load_data(out_prefix):
 
 def get_data():
     return data
+
+
+def set_data_start(new_data_start):
+    global data_start
+
+    if new_data_start < max_data_end():
+        data_start = new_data_start
+    else:
+        print('Warning: Supplied data end is greater than min of 0.',
+              'Using 0 instead.')
+        data_start = 0
+
+
+def get_data_start():
+    return data_end
 
 
 def set_data_end(new_data_end):
