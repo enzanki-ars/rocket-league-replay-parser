@@ -1,15 +1,17 @@
 import argparse
 import os
+import time
 
 from rocketleagueminimapgenerator.actor_data import parse_actor_data
 from rocketleagueminimapgenerator.data import load_data, \
     set_data_start, set_data_end
+from rocketleagueminimapgenerator.data_explorer import data_explorer_cli
 from rocketleagueminimapgenerator.frames import load_frames
 from rocketleagueminimapgenerator.object_numbers import parse_ball_obj_nums, \
     parse_car_obj_nums, parse_player_info
 from rocketleagueminimapgenerator.render import render_field, render_video
 
-with open('field-template.svg', 'r') as svg_file:
+with open('field-template-dfh-stadium.svg', 'r') as svg_file:
     field_template = svg_file.read()
 
 car_template = '<circle class="team{team_id} stroke-black" ' \
@@ -29,6 +31,12 @@ def main():
 
     # Required args
     parser.add_argument('game_json', help='The name of the game json.')
+
+    parser.add_argument('--process_type',
+                        choices=['video_minimap',
+                                 'video_stats',
+                                 'data_explorer'],
+                        default='video_minimap')
 
     # Optional args
     parser.add_argument('--data_start',
@@ -55,9 +63,20 @@ def main():
     if args.data_end:
         set_data_end(args.data_end)
 
-    render_field(video_prefix)
+    if args.process_type == 'video_minimap':
+        print('Creating video of minimap')
 
-    render_video(video_prefix)
+        video_prefix = os.path.join('renders', out_prefix.split('.')[0])
+        render_field(video_prefix)
+        render_video(video_prefix)
+    elif args.process_type == 'video_stats':
+        print('Not implemented yet.')
+    elif args.process_type == 'data_explorer':
+        time.sleep(.5)
+        data_explorer_cli()
+    else:
+        print('Unexpected Argument Error:',
+              'process_type is', args.process_type)
 
 
 if __name__ == "__main__":

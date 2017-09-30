@@ -61,3 +61,41 @@ def parse_rot_update(updated_data):
             returned_data['z'] = update['rotation']['z']['value'] / 65536 * 360
 
     return returned_data
+
+
+def parse_ang_vel_update(updated_data):
+    update = updated_data['value']['rigid_body_state_attribute_value']
+
+    returned_data = {}
+    if 'angular_velocity' in update:
+        if 'x' in update['angular_velocity']:
+            returned_data['x'] = update['angular_velocity']['x']
+        if 'y' in update['angular_velocity']:
+            returned_data['y'] = update['angular_velocity']['y']
+        if 'z' in update['angular_velocity']:
+            returned_data['z'] = update['angular_velocity']['z']
+
+    return returned_data
+
+
+def parse_lin_vel_update(updated_data):
+    update = updated_data['value']['rigid_body_state_attribute_value']
+
+    returned_data = {}
+    if 'linear_velocity' in update:
+        if 'x' in update['linear_velocity']:
+            returned_data['x'] = update['linear_velocity']['x']
+        if 'y' in update['linear_velocity']:
+            returned_data['y'] = update['linear_velocity']['y']
+        if 'z' in update['linear_velocity']:
+            returned_data['z'] = update['linear_velocity']['z']
+
+    return returned_data
+
+
+def parse_sleep_update(updated_data):
+    update = updated_data['value']['rigid_body_state_attribute_value']
+
+    if 'sleeping' in update:
+        return update['sleeping']
+

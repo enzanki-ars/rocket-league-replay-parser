@@ -7,36 +7,64 @@ import cairosvg
 from tqdm import tqdm
 
 
-def render_field(out_prefix):
+def find_scale():
     from rocketleagueminimapgenerator.frames import get_frames
     from rocketleagueminimapgenerator.data import get_data_start, get_data_end
     from rocketleagueminimapgenerator.config import get_config
 
     frames = get_frames()
 
-    ball_loc = {'x': [], 'y': []}
+    max_x = 0
+    min_x = 0
+    max_y = 0
+    min_y = 0
 
     for frame in frames:
-        ball_loc['x'].append(frame['ball']['loc']['x'])
-        ball_loc['y'].append(frame['ball']['loc']['y'])
+        ball_x = frame['ball']['loc']['x']
+        ball_y = frame['ball']['loc']['y']
 
-    max_x = max(ball_loc['x'])
-    min_x = min(ball_loc['x'])
+        if ball_x > max_x:
+            max_x = ball_x
+        elif ball_x < min_x:
+            min_x = ball_x
+
+        if ball_y > max_y:
+            max_y = ball_y
+        elif ball_y < min_y:
+            min_y = ball_y
+
+        for car_id in frame['cars'].keys():
+            car_x = frame['cars'][car_id]['loc']['x']
+            car_y = frame['cars'][car_id]['loc']['y']
+
+            if car_x > max_x:
+                max_x = car_x
+            elif car_x < min_x:
+                min_x = car_x
+
+            if car_y > max_y:
+                max_y = car_y
+            elif car_y < min_y:
+                min_y = car_y
+
     x_w = max_x - min_x
 
-    # Make divisible by 2
-    x_size = ((x_w - (x_w % (2 * get_config('size_modifier')))) /
-              get_config('size_modifier'))
-
-    max_y = max(ball_loc['y'])
-    min_y = min(ball_loc['y'])
     y_w = max_y - min_y
 
-    # Make divisible by 2
-    y_size = ((y_w - (y_w % (2 * get_config('size_modifier')))) /
-              get_config('size_modifier'))
+    scale = x_w / get_config('image_width')
 
-    print('X:', x_size, 'Y:', y_size, 'Ball:', get_config('ball_size'))
+    print('X W:', x_w, 'Y W:', y_w, 'Scale:', scale)
+
+    return x_w, y_w, scale
+
+
+def render_field(out_prefix):
+    from rocketleagueminimapgenerator.frames import get_frames
+    from rocketleagueminimapgenerator.data import get_data_start, get_data_end
+
+    frames = get_frames()
+
+    x_w, y_w, scale = find_scale()
 
     if os.path.exists(out_prefix):
         shutil.rmtree(out_prefix)
@@ -45,22 +73,18 @@ def render_field(out_prefix):
         path = Path(out_prefix)
         path.mkdir(parents=True)
 
-    for i in tqdm(range(get_data_start(), get_data_end()), desc='Video Frame Out',
-                  ascii=True):
-        render_frame(ball_loc=ball_loc, frames=frames, frame_num=i,
-                     min_x=min_x, min_y=min_y, out_prefix=out_prefix,
-                     x_size=x_size, y_size=y_size)
+    for i in tqdm(range(get_data_start(), get_data_end()),
+                  desc='Video Frame Out', ascii=True):
+        render_frame(frames=frames, frame_num=i, out_prefix=out_prefix,
+                     x_size=x_w, y_size=y_w, scale=scale)
 
 
-def render_frame(ball_loc, frames, frame_num,
-                 min_x, min_y, x_size, y_size, out_prefix):
+def render_frame(frames, frame_num, out_prefix, x_size, y_size, scale):
     import math
     from rocketleagueminimapgenerator.main import frame_num_format, \
         car_template, field_template
-    from rocketleagueminimapgenerator.object_numbers import \
-        get_player_info
-    from rocketleagueminimapgenerator.config import \
-        get_config
+    from rocketleagueminimapgenerator.object_numbers import get_player_info
+    from rocketleagueminimapgenerator.config import get_config
 
     with open(os.path.join(out_prefix,
                            frame_num_format.format(frame_num) + '.png'),
@@ -74,11 +98,15 @@ def render_frame(ball_loc, frames, frame_num,
         tri_pt_x_const = r / 2 * math.sqrt(3)
         tri_pt_y_const = r / math.sqrt(3)
 
+        y_mod = get_config('y_mod')
+
         for car_id in frames[frame_num]['cars'].keys():
-            car_x = ((frames[frame_num]['cars'][car_id]['loc']['x']
-                      - min_x) / get_config('size_modifier'))
-            car_y = ((frames[frame_num]['cars'][car_id]['loc']['y']
-                      - min_y) / get_config('size_modifier'))
+            car_x = ((frames[frame_num]['cars'][car_id]['loc']['x'] + (
+                x_size / 2)) / scale)
+            car_y = ((frames[frame_num]['cars'][car_id]['loc']['y'] + (
+                y_size / 2)) / scale) + y_mod
+
+            # print('Car ID:', car_id, 'Car X:', car_x, 'Car Y:', car_y)
 
             car_placement += car_template.format(
                     team_id=get_player_info()[car_id]['team'],
@@ -94,26 +122,29 @@ def render_frame(ball_loc, frames, frame_num,
                     car_triangle_pt3_x=car_x + tri_pt_x_const,
                     car_triangle_pt3_y=car_y + tri_pt_y_const,
 
-                    car_angle=frames[frame_num]['cars'][car_id]['rot']['y'] + \
-                              90,
+                    car_angle=(frames[frame_num]['cars'][car_id]['rot']['y'] +
+                               90),
 
                     car_size=car_size,
                     arrow_move=car_size * 1.5
             )
 
+        ball_x = (
+            (frames[frame_num]['ball']['loc']['x'] + (x_size / 2)) / scale)
+        ball_y = ((frames[frame_num]['ball']['loc']['y'] + (
+            y_size / 2)) / scale) + y_mod
+
+        # print('Ball:', 'Ball X:', ball_x, 'Ball Y:', ball_y)
+
         cairosvg.svg2png(bytestring=bytes(
-                field_template.format(x_size=x_size,
-                                      y_size=y_size,
-                                      center_pos_x=x_size / 2,
-                                      center_pos_y=y_size / 2,
-                                      center_size=get_config('center_size'),
-                                      ball_pos_x=(ball_loc['x'][frame_num] -
-                                                  min_x) / get_config(
-                                              'size_modifier'),
-                                      ball_pos_y=(ball_loc['y'][frame_num] -
-                                                  min_y) / get_config(
-                                              'size_modifier'),
+                field_template.format(ball_pos_x=ball_x,
+                                      ball_pos_y=ball_y,
+
                                       ball_size=get_config('ball_size'),
+
+                                      x_size=x_size,
+                                      y_size=y_size,
+
                                       car_placement=car_placement
                                       ), 'UTF-8'), write_to=file_out)
 

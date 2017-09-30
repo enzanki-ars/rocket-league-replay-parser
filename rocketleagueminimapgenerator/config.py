@@ -6,12 +6,15 @@ from ruamel.yaml import YAML
 
 
 class GenConst(enum.Enum):
-    size_modifier = 16
+    size_modifier = 4
 
     ball_size = 32 / math.log(size_modifier, 2)
     car_size = 32 / math.log(size_modifier, 2)
     text_size = 64 / math.log(size_modifier, 2)
     center_size = 128 / math.log(size_modifier, 2)
+
+    y_mod = 110
+    image_width = 983
 
 
 def get_config(key):
