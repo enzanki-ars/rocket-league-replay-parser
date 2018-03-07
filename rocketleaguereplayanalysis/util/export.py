@@ -1,45 +1,20 @@
-def get_all_data():
-    from rocketleaguereplayanalysis.data.object_numbers import \
-        get_player_info
-    from rocketleaguereplayanalysis.parser.frames import get_frames
+def get_all_data(frames, player_info, team_info):
     from rocketleaguereplayanalysis.util.extra_info import get_field_dimensions
-
-    from rocketleaguereplayanalysis.data.object_numbers import team0, team1, \
-        get_team_color, get_team_name
     return {
-        'team_info': {
-            'number': {
-                'team0': team0,
-                'team1': team1
-            },
-            'name': {
-                'note': 'Not Fully Implemented Yet',
-                'team0': get_team_name(team0),
-                'team1': get_team_name(team1),
-            },
-            'color': {
-                'note': 'Not Fully Implemented Yet',
-                'team0': get_team_color(team0),
-                'team1': get_team_color(team1),
-            }
-        },
-        'player_info': get_player_info(),
-        'field_size': get_field_dimensions(),
-        'frames': get_frames()
+        'team_info': team_info,
+        'player_info': player_info,
+        'field_size': get_field_dimensions(frames),
+        'frames': frames
     }
 
 
-def export_parsed_data_json():
+def export_parsed_data_json(video_prefix, frames, player_info, team_info):
     import json
     import os
 
-    from rocketleaguereplayanalysis.render.do_render import get_video_prefix
-
-    video_prefix = get_video_prefix()
-
     with open(os.path.join(video_prefix + '-export-parsed-data.json'),
               'w') as export_file:
-        json.dump(get_all_data(), export_file)
+        json.dump(get_all_data(frames, player_info, team_info), export_file)
 
 
 def flatten(d, parent_key='', sep='_'):
@@ -55,19 +30,18 @@ def flatten(d, parent_key='', sep='_'):
     return dict(items)
 
 
-def export_parsed_data_csv():
+def export_parsed_data_csv(video_prefix, frames, player_info, team_info):
     import csv
     import os
 
-    from rocketleaguereplayanalysis.render.do_render import get_video_prefix
-
-    video_prefix = get_video_prefix()
+    all_data = get_all_data(frames, player_info, team_info)
 
     with open(os.path.join(video_prefix + '-export-parsed-data.csv'),
               'w', newline='') as csvfile:
-        fieldnames = flatten(get_all_data()['frames'][0]).keys()
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, dialect='excel')
+        fieldnames = flatten(all_data['frames'][0]).keys()
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames,
+                                dialect='excel')
 
         writer.writeheader()
-        for frame in get_all_data()['frames']:
+        for frame in all_data['frames']:
             writer.writerow(flatten(frame))

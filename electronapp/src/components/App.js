@@ -57,20 +57,18 @@ export default class App extends Component {
 
         // Initially:
         const newState = JSON.parse(JSON.stringify(this.state)); // Clone the state
-        const blueTeamID = data.team_info.number.team0;
-        const orangeTeamID = data.team_info.number.team1;
 
         Object.keys(data.player_info).forEach((playerKey) => {
             const playerInfo = data.player_info[playerKey];
-            if (playerInfo.team === blueTeamID) {
+            if (playerInfo.team === 0) {
                 newState.players.blue[playerKey] = playerInfo;
-            } else if (playerInfo.team === orangeTeamID) {
+            } else {
                 newState.players.orange[playerKey] = playerInfo;
             }
         });
 
-        newState.teams.blue.name = data.team_info.name.team0;
-        newState.teams.orange.name = data.team_info.name.team1;
+        newState.teams.blue.name = data.team_info[0].name;
+        newState.teams.orange.name = data.team_info[1].name;
 
         this.setState(newState, () => {
             this.play(); // TODO Should this be removed and users have to press 'Play' manually?

@@ -4,7 +4,7 @@
       "frames",
       "frame_num",
       "pressure",
-      "team0"
+      0
     ],
     "filter": "drawtext",
     "options": {
@@ -23,7 +23,7 @@
       "frames",
       "frame_num",
       "pressure",
-      "team1"
+      1
     ],
     "filter": "drawtext",
     "options": {

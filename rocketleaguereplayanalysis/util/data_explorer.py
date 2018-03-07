@@ -1,10 +1,5 @@
-def data_explorer_cli():
+def data_explorer_cli(data, actor_data, player_info, team_info, frames):
     from pprint import pprint
-    from rocketleaguereplayanalysis.data.data_loader import get_data
-    from rocketleaguereplayanalysis.data.actor_data import get_actor_data
-    from rocketleaguereplayanalysis.data.object_numbers import \
-        get_player_info, team0, team1
-    from rocketleaguereplayanalysis.parser.frames import get_frames
 
     print()
 
@@ -24,8 +19,6 @@ def data_explorer_cli():
     """)
 
     cont = True
-
-    data = get_data()
 
     while cont:
         user_input = input('> ').split(' ')
@@ -60,19 +53,21 @@ def data_explorer_cli():
             except AttributeError:
                 print('Key does not have any subkeys')
         elif parsed_input[0] == 'actor_data':
-            pprint(get_actor_data())
+            pprint(actor_data)
         elif parsed_input[0] == 'player_info':
-            pprint(get_player_info())
+            pprint(player_info)
+        elif parsed_input[0] == 'team_info':
+            pprint(team_info)
         elif parsed_input[0] == 'pressure_info':
-            print('Blue:\t', get_frames()[-1]['pressure'][team0])
-            print('Orange:\t', get_frames()[-1]['pressue'][team1])
+            print('Blue:\t', frames[-1]['pressure'][0])
+            print('Orange:\t', frames[-1]['pressue'][1])
         elif parsed_input[0] == 'possession_info':
-            print('Blue:\t', get_frames()[-1]['possession'][team0])
-            print('Orange:\t', get_frames()[-1]['possession'][team1])
+            print('Blue:\t', frames[-1]['possession'][0])
+            print('Orange:\t', frames[-1]['possession'][1])
         elif parsed_input[0] == 'source_loop_mode':
-            source_loop_mode()
+            source_loop_mode(data)
         elif parsed_input[0] == 'data_loop_mode':
-            data_loop_mode()
+            data_loop_mode(frames)
         elif parsed_input[0] == 'exit':
             cont = False
         else:
@@ -81,16 +76,13 @@ def data_explorer_cli():
             print('Parsed Input:', parsed_input)
 
 
-def source_loop_mode():
+def source_loop_mode(data):
     from pprint import pprint
-    from rocketleaguereplayanalysis.data.data_loader import get_data
 
     print('===== Entering Loop Mode =====')
     print('To exit, type exit.')
     user_input2 = input('Press Enter to Continue > ')
     parsed_user_input2 = user_input2.split(' ')
-
-    data = get_data()
 
     if parsed_user_input2 != 'exit':
         for i, frame in enumerate(data['Frames']):
@@ -116,16 +108,13 @@ def source_loop_mode():
         return
 
 
-def data_loop_mode():
+def data_loop_mode(frames):
     from pprint import pprint
-    from rocketleaguereplayanalysis.parser.frames import get_frames
 
     print('===== Entering Loop Mode =====')
     print('To exit, type exit.')
     user_input2 = input('Press Enter to Continue > ')
     parsed_user_input2 = user_input2.split(' ')
-
-    frames = get_frames()
 
     if parsed_user_input2 != 'exit':
         for i, frame in enumerate(frames):

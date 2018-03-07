@@ -1,6 +1,6 @@
 # Rocket League Replay Analysis
 
-**Version:** v1.4.0-alpha1
+**Version:** v1.4.0-alpha3
 
 ## Licences
 
@@ -105,7 +105,7 @@ optional arguments:
                         recording. If you recorded the replay after the game
                         ended, do not add this argument to sync to that
                         recording.
-  --version             Print version and exit (v1.4.0-alpha1)
+  --version             Print version and exit (v1.4.0-alpha3)
 ```
 
 ## Known Issues

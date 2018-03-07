@@ -1,31 +1,13 @@
-video_prefix = None
-
-
-def get_video_prefix():
-    global video_prefix
-
-    return video_prefix
-
-
-def set_video_prefix(prefix):
-    global video_prefix
-
-    video_prefix = prefix
-
-
-def render(filename):
+def render(filename, assets_path, frames, player_info, team_info,
+           video_prefix):
     import json
     import os
-    from rocketleaguereplayanalysis.util.asset_loc import get_assets_path
     from rocketleaguereplayanalysis.render.ffmpeg_cmd import \
         create_ffmpeg_cmd_files_from_path, replace_in_array
-    from rocketleaguereplayanalysis.data.object_numbers import \
-        get_player_info, get_player_team_name, get_player_team_color, \
-        get_team_name, get_team_color
     from rocketleaguereplayanalysis.util.transcode import \
         render_video
 
-    with open(os.path.join(get_assets_path(), filename + '.json')) as f:
+    with open(os.path.join(assets_path, filename + '.json')) as f:
         render_paths = json.load(f)
 
     is_player_render = False
@@ -34,23 +16,39 @@ def render(filename):
         if 'modify' in render_cmd:
             if 'reinit' in render_cmd:
                 create_ffmpeg_cmd_files_from_path(
+                        frames=frames,
+                        player_info=player_info,
+                        team_info=team_info,
+                        video_prefix=video_prefix,
                         path=render_cmd['variable_path'],
                         filter_type=render_cmd['filter'],
                         reinit=render_cmd['reinit'],
                         modify=render_cmd['modify'])
             else:
                 create_ffmpeg_cmd_files_from_path(
+                        frames=frames,
+                        player_info=player_info,
+                        team_info=team_info,
+                        video_prefix=video_prefix,
                         path=render_cmd['variable_path'],
                         filter_type=render_cmd['filter'],
                         modify=render_cmd['modify'])
         else:
             if 'reinit' in render_cmd:
                 create_ffmpeg_cmd_files_from_path(
+                        frames=frames,
+                        player_info=player_info,
+                        team_info=team_info,
+                        video_prefix=video_prefix,
                         path=render_cmd['variable_path'],
                         filter_type=render_cmd['filter'],
                         reinit=render_cmd['reinit'])
             else:
                 create_ffmpeg_cmd_files_from_path(
+                        frames=frames,
+                        player_info=player_info,
+                        team_info=team_info,
+                        video_prefix=video_prefix,
                         path=render_cmd['variable_path'],
                         filter_type=render_cmd['filter'])
 
@@ -58,7 +56,7 @@ def render(filename):
             is_player_render = True
 
     if is_player_render:
-        for player in get_player_info().keys():
+        for player in player_info.keys():
             extra_cmd_filter = ''
 
             for i, render_cmd in enumerate(render_paths, start=1):
@@ -71,18 +69,22 @@ def render(filename):
 
                 if render_cmd['filter'] == 'drawtext':
                     extra_cmd_filter += '=fontfile=\\\'' + \
-                                        os.path.join(get_assets_path(),
+                                        os.path.join(assets_path,
                                                      'OpenSans.ttf').replace(
                                                 '\\', '\\\\') + '\\\''
                     if 'set_team_name' in render_cmd:
                         extra_cmd_filter += ':text=' + \
-                                            get_player_team_name(player)
+                                            team_info[
+                                                player_info[player]['team']][
+                                                'name']
                     if 'options' in render_cmd:
                         extra_cmd_filter += ':'
                 elif render_cmd['filter'] == 'drawbox':
                     if 'set_team_color' in render_cmd:
                         extra_cmd_filter += '=color=' + \
-                                            get_player_team_color(player)
+                                            team_info[
+                                                player_info[player]['team']][
+                                                'color']
                     if 'options' in render_cmd:
                         extra_cmd_filter += ':'
                 else:
@@ -103,8 +105,8 @@ def render(filename):
                 if i != len(render_paths):
                     extra_cmd_filter += ','
 
-            render_video(str(player) + '-' + filename,
-                         overlay=os.path.join(get_assets_path(), filename),
+            render_video(str(player) + '-' + filename, frames, video_prefix,
+                         overlay=os.path.join(assets_path, filename),
                          extra_cmd=['-vf', extra_cmd_filter])
     else:
         extra_cmd_filter = ''
@@ -117,21 +119,21 @@ def render(filename):
 
             if render_cmd['filter'] == 'drawtext':
                 extra_cmd_filter += '=fontfile=\\\'' + \
-                                    os.path.join(get_assets_path(),
+                                    os.path.join(assets_path,
                                                  'OpenSans.ttf').replace(
                                             '\\',
                                             '\\\\') + '\\\''
                 if 'set_team_name' in render_cmd:
                     extra_cmd_filter += ':text=' + \
-                                        get_team_name(
-                                                render_cmd['set_team_name'])
+                                        team_info[render_cmd['set_team_name']][
+                                            'name']
                 if 'options' in render_cmd:
                     extra_cmd_filter += ':'
             elif render_cmd['filter'] == 'drawbox':
                 if 'set_team_color' in render_cmd:
                     extra_cmd_filter += '=color=' + \
-                                        get_team_color(
-                                                render_cmd['set_team_color'])
+                                        team_info[render_cmd['set_team_color']][
+                                            'color']
                 if 'options' in render_cmd:
                     extra_cmd_filter += ':'
             else:
@@ -150,6 +152,6 @@ def render(filename):
             if i != len(render_paths):
                 extra_cmd_filter += ','
 
-        render_video(filename,
-                     overlay=os.path.join(get_assets_path(), filename),
+        render_video(filename, frames, video_prefix,
+                     overlay=os.path.join(assets_path, filename),
                      extra_cmd=['-vf', extra_cmd_filter])

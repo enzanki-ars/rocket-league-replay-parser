@@ -1,19 +1,12 @@
-def create_ffmpeg_cmd_files_from_path(path, filter_type,
+def create_ffmpeg_cmd_files_from_path(path, filter_type, frames, player_info,
+                                      video_prefix, team_info,
                                       reinit=None, modify=None):
     import functools
     import os
 
-    from rocketleaguereplayanalysis.data.object_numbers import \
-        get_player_info
-    from rocketleaguereplayanalysis.parser.frames import get_frames
     from rocketleaguereplayanalysis.util.export import get_all_data
-    from rocketleaguereplayanalysis.render.do_render import get_video_prefix
 
-    all_data = get_all_data()
-    frames = get_frames()
-    player_info = get_player_info()
-
-    video_prefix = get_video_prefix()
+    all_data = get_all_data(frames, player_info, team_info)
 
     name = '-'.join(str(x) for x in path)
     if not os.path.exists(os.path.join(video_prefix)):
@@ -42,13 +35,14 @@ def create_ffmpeg_cmd_files_from_path(path, filter_type,
                                                     frame_path, all_data)
 
                         if curr_val != last_val or i == 0:
-                            write_to_file(f, new_name, i, filter_type, reinit,
+                            write_to_file(f, new_name, frames, i, filter_type,
+                                          reinit,
                                           curr_val, modify)
                         last_val = curr_val
                 else:
                     curr_val = functools.reduce(lambda d, key: d[key],
                                                 new_path, all_data)
-                    write_to_file(f, new_name, 0, filter_type, reinit,
+                    write_to_file(f, new_name, frames, 0, filter_type, reinit,
                                   curr_val, modify)
 
     else:
@@ -66,7 +60,7 @@ def create_ffmpeg_cmd_files_from_path(path, filter_type,
                                                 all_data)
 
                     if curr_val != last_val or i == 0:
-                        write_to_file(f, name, i, filter_type, reinit,
+                        write_to_file(f, name, frames, i, filter_type, reinit,
                                       curr_val,
                                       modify)
 
@@ -76,18 +70,16 @@ def create_ffmpeg_cmd_files_from_path(path, filter_type,
                                             path,
                                             all_data)
 
-                write_to_file(f, name, 0, filter_type, reinit, curr_val,
+                write_to_file(f, name, frames, 0, filter_type, reinit,
+                              curr_val,
                               modify)
 
 
-def write_to_file(file, name, frame_num, filter_type, reinit, value,
+def write_to_file(file, name, frames, frame_num, filter_type, reinit, value,
                   modify=None):
-    from rocketleaguereplayanalysis.parser.frames import get_frames
-    from rocketleaguereplayanalysis.data.object_numbers import \
-        get_team_color
     from rocketleaguereplayanalysis.util.sync import get_sync_time_type
 
-    file.write(str(get_frames()[frame_num]['time'][get_sync_time_type()]) +
+    file.write(str(frames[frame_num]['time'][get_sync_time_type()]) +
                " " + filter_type + "@" + name +
                " reinit '")
 
@@ -111,8 +103,6 @@ def write_to_file(file, name, frame_num, filter_type, reinit, value,
                             if check == str(mod_value):
                                 mod_value = modify[modify_style][check]
                                 break
-                    elif modify_style == 'replace_color':
-                        mod_value = get_team_color(mod_value)
 
             file.write(reinit_what + '=' +
                        reinit[reinit_what].format(mod_value))
