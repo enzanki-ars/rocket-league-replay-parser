@@ -4,6 +4,7 @@
 /*.replay
 *.exe
 *.zip
+/test/
 
 # Created by .ignore support plugin (hsz.mobi)
 ### VirtualEnv template
