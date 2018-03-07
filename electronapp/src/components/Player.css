@@ -1,0 +1,69 @@
+.player-info {
+    display: grid;
+    grid-template-areas:
+        "photo name name name name"
+        "photo goals assists saves shots";
+    padding: 15px 0;
+    border-bottom: solid 1px #AAA;
+    font-size: 20px;
+    align-items: center;
+}
+
+.player-photo {
+    grid-area: photo;
+    justify-self: center;
+    margin-left: -10px;
+    padding: 10px;
+}
+
+.player-photo img {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    border: solid 3px #ef8417;
+}
+
+.team-blue .player-photo img {
+    border-color: #406bcf;
+}
+
+.player-name {
+    grid-area: name;
+    font-size: 30px;
+    font-weight: bold;
+    /* text-shadow: #ef8417 1px 1px 5px; */
+    border-bottom: solid 2px #f7a610;
+}
+
+.team-blue .player-name {
+    border-color: #1077f7;
+}
+
+.player-goals {
+    grid-area: goals;
+}
+
+.player-assists {
+    grid-area: assists;
+}
+
+.player-saves {
+    grid-area: saves;
+}
+.player-shots {
+    grid-area: shots;
+}
+
+.player-goals, .player-assists, .player-saves, .player-shots {
+    padding-right: 10px;
+}
+
+.player-goals, .player-assists, .player-saves {
+    margin-right: 10px;
+    border-right: solid 1px #CCC;
+}
+
+.player-stat-title {
+    font-weight: bold;
+    border-bottom: solid 1px #CCC;
+}

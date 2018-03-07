@@ -1,6 +1,11 @@
+@font-face {
+    font-family: bourgeois;
+    src: url(./font/bourgeois.ttf);
+}
+
 html, body, #root {
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
+    font-family: bourgeois, sans-serif;
     height: 100%;
 }
