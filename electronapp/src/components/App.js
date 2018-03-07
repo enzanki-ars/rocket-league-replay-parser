@@ -31,6 +31,21 @@ export default class App extends Component {
                 seconds: 0
             },
 
+            ballState: {
+                loc: {
+                    x: 0,
+                    y: 0
+                }
+            },
+            bluePlayersState: [],
+            orangePlayersState: [],
+            fieldSize: {
+                min_x: 0,
+                min_y: 0,
+                x_size: 0,
+                y_size: 0 
+            },
+
             playing: false
         };
 
@@ -70,6 +85,8 @@ export default class App extends Component {
         newState.teams.blue.name = data.team_info[0].name;
         newState.teams.orange.name = data.team_info[1].name;
 
+        newState.fieldSize = data.field_size;
+
         this.setState(newState, () => {
             this.play(); // TODO Should this be removed and users have to press 'Play' manually?
         });
@@ -80,17 +97,29 @@ export default class App extends Component {
         const newState = JSON.parse(JSON.stringify(this.state)); // Clone the state
 
         const frame = this.frames[this.currentFrame];
-        const { scoreboard, time, cars } = frame;
+        const { scoreboard, time, cars, ball } = frame;
 
         newState.teams.blue.score = scoreboard.team0;
         newState.teams.orange.score = scoreboard.team1;
         newState.time.minutes = time.game_minutes;
         newState.time.seconds = time.game_seconds;
 
+        newState.ballState = ball;
+        newState.bluePlayersState = [];
+        newState.orangePlayersState = [];
+
         Object.keys(cars).forEach((playerID) => {
             const playerInfo = cars[playerID];
-            const player = newState.players.orange[playerID] !== undefined ? newState.players.orange[playerID]: newState.players.blue[playerID];
-            Object.assign(player, playerInfo.scoreboard);
+            const isBlueTeam = newState.players.blue[playerID] !== undefined;
+            const player = isBlueTeam ? newState.players.blue[playerID]: newState.players.orange[playerID];
+            Object.assign(player, playerInfo.scoreboard); // Player Stats
+
+            // Player car state
+            if (isBlueTeam) {
+                newState.bluePlayersState.push(playerInfo);
+            } else {
+                newState.orangePlayersState.push(playerInfo);
+            }
         });
 
         this.setState(newState, () => {
@@ -129,7 +158,12 @@ export default class App extends Component {
                     scoreBlue={this.state.teams.blue.score}
                     scoreOrange={this.state.teams.orange.score}
                 />
-                <Minimap />
+                <Minimap
+                    ballState={this.state.ballState}
+                    bluePlayersState={this.state.bluePlayersState}
+                    orangePlayersState={this.state.orangePlayersState}
+                    fieldSize={this.state.fieldSize}
+                />
                 <Team team='blue' players={bluePlayers} />
                 <Team team='orange' players={orangePlayers} />
                 <Timeline play={this.play} pause={this.pause} playing={this.state.playing} />
