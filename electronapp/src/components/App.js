@@ -54,6 +54,7 @@ export default class App extends Component {
 
         this.play = this.play.bind(this);
         this.pause = this.pause.bind(this);
+        this.setPlaytimeTo = this.setPlaytimeTo.bind(this);
     }
 
     componentDidMount() {
@@ -125,7 +126,7 @@ export default class App extends Component {
         this.setState(newState, () => {
             if (this.state.playing) {
                 setTimeout(() => {
-                    if (this.currentFrame + 1 < this.frames.length) {
+                    if (this.currentFrame < this.frames.length - 1) {
                         this.currentFrame++;
                     }
                     this.nextFrame();
@@ -144,10 +145,26 @@ export default class App extends Component {
         this.setState({ playing: false });
     }
 
+    /**
+     * Set the time of the playback from a specific time
+     * @param {number} timeFraction value from 0 to 1, 0 being the start of the replay to 1 being the end
+     */
+    setPlaytimeTo(timeFraction) {
+        if (!this.frames) {
+            return;
+        }
+        
+        this.currentFrame = Math.round((this.frames.length - 1) * timeFraction);
+        if (!this.state.playing) { // Playback 1 frame in order to update the cars and player locations
+            this.nextFrame();
+        }
+    }
+
     render() {
         const bluePlayers = Object.values(this.state.players.blue);
         const orangePlayers = Object.values(this.state.players.orange);
         const timerSeconds = ("0" + this.state.time.seconds).slice(-2); // Make sure 2 digits are shown
+        const playtimeFraction = this.currentFrame / (this.frames.length - 1);
         return (
             <div className='App'>
                 <Scoreboard
@@ -166,7 +183,13 @@ export default class App extends Component {
                 />
                 <Team team='blue' players={bluePlayers} />
                 <Team team='orange' players={orangePlayers} />
-                <Timeline play={this.play} pause={this.pause} playing={this.state.playing} />
+                <Timeline
+                    play={this.play}
+                    pause={this.pause}
+                    setPlaytimeTo={this.setPlaytimeTo}
+                    playing={this.state.playing}
+                    playtimeFraction={playtimeFraction}
+                />
             </div>
         );
     }

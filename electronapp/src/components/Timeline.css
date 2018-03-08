@@ -1,0 +1,36 @@
+.timeline {
+    text-align: center;
+}
+
+.slider {
+    display: block;
+    -webkit-appearance: none;
+    width: 95%;
+    height: 6px;
+    background: #083042;
+    outline: none;
+    opacity: 0.9;
+    transition: opacity .2s;
+    box-shadow: #7f7f7f 0 0 5px 1px;
+    margin: 10px auto;
+}
+
+.slider:hover, .slide:focus {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #93e1e3;
+    cursor: pointer;
+    border: solid 1px #4f4f4f;
+}
+
+.play-pause-button {
+    width: 17px;
+    height: 22px;
+    cursor: pointer;
+}
