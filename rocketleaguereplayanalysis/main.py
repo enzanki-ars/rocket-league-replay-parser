@@ -115,8 +115,7 @@ def main():
                                          '%Y-%m-%d %H-%M-%S'))
 
         print('Parsing data...')
-        frames, actor_data, player_info, team_info, game_event_num = \
-            parse_data(data)
+        frames = parse_data(data)
         print('Data successfully parsed.')
 
         if not args.render and not args.render_all \
