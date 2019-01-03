@@ -24,7 +24,7 @@ def create_ffmpeg_cmd_files_from_path(path, filter_type, frames, player_info,
                 os.remove(os.path.join(video_prefix, new_name + '.txt'))
 
             with open(os.path.join(video_prefix, new_name + '.txt'),
-                      'a') as f:
+                      'a', encoding='utf-8') as f:
 
                 if 'frame_num' in path:
                     for i in range(0, len(frames)):
@@ -50,7 +50,7 @@ def create_ffmpeg_cmd_files_from_path(path, filter_type, frames, player_info,
             os.remove(os.path.join(video_prefix, name + '.txt'))
 
         with open(os.path.join(video_prefix,
-                               name + '.txt'), 'a') as f:
+                               name + '.txt'), 'a', encoding='utf-8') as f:
             if 'frame_num' in path:
                 for i in range(0, len(frames)):
                     frame_path = list(replace_in_array(path, 'frame_num', i))
@@ -84,26 +84,29 @@ def write_to_file(file, name, frames, frame_num, filter_type, reinit, value,
                " reinit '")
 
     if reinit:
-        for i, reinit_what in enumerate(reinit.keys(), start=1):
-            mod_value = value
-            if modify:
-                for modify_style in modify.keys():
-                    if modify_style == 'add':
-                        mod_value = mod_value + modify[modify_style]
-                    elif modify_style == 'subtract':
-                        mod_value = mod_value - modify[modify_style]
-                    elif modify_style == 'multiply':
-                        mod_value = mod_value * modify[modify_style]
-                    elif modify_style == 'divide':
-                        mod_value = mod_value / modify[modify_style]
-                    elif modify_style == 'mod':
-                        mod_value = mod_value % modify[modify_style]
-                    elif modify_style == 'replace':
-                        for check in modify[modify_style].keys():
-                            if check == str(mod_value):
-                                mod_value = modify[modify_style][check]
-                                break
+        mod_value = value
+        if modify:
+            if 'pow' in modify:
+                mod_value = mod_value ** modify['pow']
+            elif 'multiply' in modify:
+                mod_value = mod_value * modify['multiply']
+            elif 'divide' in modify:
+                mod_value = mod_value / modify['divide']
+            elif 'floor_divide' in modify:
+                mod_value = mod_value / modify['floor_divide']
+            elif 'mod' in modify:
+                mod_value = mod_value % modify['mod']
+            elif 'add' in modify:
+                mod_value = mod_value + modify['add']
+            elif 'subtract' in modify:
+                mod_value = mod_value - modify['subtract']
+            elif 'replace' in modify:
+                for check in modify['replace'].keys():
+                    if check == str(mod_value):
+                        mod_value = modify['replace'][check]
+                        break
 
+        for i, reinit_what in enumerate(reinit.keys(), start=1):
             file.write(reinit_what + '=' +
                        reinit[reinit_what].format(mod_value))
             if i != len(reinit):

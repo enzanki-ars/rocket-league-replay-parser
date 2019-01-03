@@ -1,4 +1,4 @@
-__all__ = ['main',
+__all__ = ['main_cli.py',
            'actor_data',
            'config'
            'data',

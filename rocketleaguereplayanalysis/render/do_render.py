@@ -68,9 +68,14 @@ def render(filename, assets_path, frames, player_info, team_info,
                                     render_cmd['filter'] + '@' + new_name
 
                 if render_cmd['filter'] == 'drawtext':
+                    if 'font' not in render_cmd:
+                        font = 'OpenSans.ttf'
+                    else:
+                        font = render_cmd['font']
+
                     extra_cmd_filter += '=fontfile=\\\'' + \
                                         os.path.join(assets_path,
-                                                     'OpenSans.ttf').replace(
+                                                     font).replace(
                                                 '\\', '\\\\') + '\\\''
                     if 'set_team_name' in render_cmd:
                         extra_cmd_filter += ':text=' + \
@@ -118,9 +123,14 @@ def render(filename, assets_path, frames, player_info, team_info,
                                 render_cmd['filter'] + '@' + name
 
             if render_cmd['filter'] == 'drawtext':
+                if 'font' not in render_cmd:
+                    font = 'OpenSans.ttf'
+                else:
+                    font = render_cmd['font']
+
                 extra_cmd_filter += '=fontfile=\\\'' + \
                                     os.path.join(assets_path,
-                                                 'OpenSans.ttf').replace(
+                                                 font).replace(
                                             '\\',
                                             '\\\\') + '\\\''
                 if 'set_team_name' in render_cmd:

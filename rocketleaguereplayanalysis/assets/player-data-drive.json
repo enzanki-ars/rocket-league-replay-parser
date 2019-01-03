@@ -72,10 +72,10 @@
       "fontcolor": "black",
       "x": 80,
       "y": 105,
-      "text": "0°"
+      "text": "0\u00B0"
     },
     "reinit": {
-      "text": "{0:.0f}°"
+      "text": "{0:.0f}\u00B0"
     }
   },
   {
@@ -109,16 +109,17 @@
     ],
     "modify": {
       "replace": {
-        "True": "Yes",
-        "False": "No"
+        "True": "\uf3fd",
+        "False": ""
       }
     },
     "filter": "drawtext",
+    "font": "Font-Awesome-5-Free-Solid-900.otf",
     "options": {
       "fontsize": 18,
       "fontcolor": "black",
-      "x": 225,
-      "y": 105,
+      "x": 243,
+      "y": 103,
       "text": "No"
     },
     "reinit": {
