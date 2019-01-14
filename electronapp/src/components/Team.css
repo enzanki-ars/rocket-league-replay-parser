@@ -1,0 +1,14 @@
+.team {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border-left: solid 1px #BBB;
+    border-right: none;
+}
+
+.team-blue {
+    border-right: solid 1px #BBB;
+    border-left: none;
+}

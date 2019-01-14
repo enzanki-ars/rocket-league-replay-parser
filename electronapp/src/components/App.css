@@ -1,0 +1,33 @@
+.App {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-areas:
+        "scoreboard scoreboard scoreboard"
+        "team1 minimap team2"
+        "team1 timeline team2";
+    grid-template-rows: 85px auto 75px;
+    grid-template-columns: 1fr 3fr 1fr;
+    justify-items: stretch;
+    align-items: stretch;
+}
+
+.scoreboard {
+    grid-area: scoreboard;
+}
+
+.minimap {
+    grid-area: minimap;
+}
+
+.team-blue {
+    grid-area: team1;
+}
+
+.team-orange {
+    grid-area: team2;
+}
+
+.timeline {
+    grid-area: timeline;
+}

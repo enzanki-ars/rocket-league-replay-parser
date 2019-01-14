@@ -1,4 +1,5 @@
 __all__ = ['main',
+           'server',
            'actor_data',
            'config'
            'data',
